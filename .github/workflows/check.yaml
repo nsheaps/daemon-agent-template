@@ -1,0 +1,34 @@
+name: check
+
+# Minimal CI for a template repo: validate agent.yaml against its schema and
+# check .claude/{skills,agents,rules} stay one level deep. No binary, no
+# release pipeline — see docs/specs/draft/daemon-agent-template.md in
+# nsheaps/claude-daemon-setup.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+jobs:
+  validate-agent-yaml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "lts/*"
+      - run: node scripts/validate-agent-yaml.mjs
+
+  check-claude-depth:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - run: bash scripts/check-claude-depth.sh

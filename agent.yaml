@@ -1,0 +1,6 @@
+agent:
+  name: example-agent
+  description: >-
+    Template agent identity for claude-daemon-setup. Fork this repo, rename
+    `agent.name` to something unique, and it becomes your daemon's service
+    label, launchd identity, and Remote Control session name.
